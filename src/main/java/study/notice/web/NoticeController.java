@@ -11,7 +11,7 @@ public class NoticeController {
 	// 공지사항 리스트
 	@RequestMapping(value = "/noticeList.do")
 	public String noticeList() throws Exception {
-		System.out.println("sss");
+		
 		return "/study/notice/noticeList";
 	}
 
