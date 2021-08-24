@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="noticeDAO">
+
+	<select id="noticeDAO.selectNoticeList" resultType="egovMap">
+		SELECT
+		
+		bno
+		,title
+		,content
+		,userId
+		,viewCnt
+		,fix
+		,DATE_FORMAT(regDate,'%Y-%m-%d') as	regDate
+
+		FROM tb_board
+		
+		WHERE fix = '0'
+		<choose>
+			<when test="searchCnd1 == 1">
+				AND TITLE LIKE CONCAT('%',#{searchWrd} ,'%')
+			</when>
+			<when test="searchCnd1 == 2">
+				AND CONTENT LIKE CONCAT('%',#{searchWrd} ,'%')
+			</when>
+			<when test="searchCnd1 == 0">
+				AND(
+				TITLE LIKE CONCAT('%',#{searchWrd} ,'%') or
+				CONTENT LIKE CONCAT('%',#{searchWrd} ,'%')
+				)
+			</when>
+		</choose>
+		ORDER BY fix DESC, bno DESC
+		LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+	</select>
+
+	<select id="noticeDAO.selectNoticeListFix" resultType="egovMap">
+		SELECT
+		
+		bno
+		,title
+		,userId
+		,viewCnt
+		,fix
+		,DATE_FORMAT(regDate,'%Y-%m-%d') as	regDate
+
+		FROM tb_board
+		
+		WHERE fix = '1'
+
+		ORDER BY bno DESC
+	</select>
+
+	<select id="noticeDAO.selectNoticeCnt" resultType="int">
+		SELECT COUNT(bno)
+		
+		FROM tb_board
+		
+		WHERE fix = '0'
+		<choose>
+			<when test="searchCnd1 == 1">
+				AND title LIKE CONCAT('%',#{searchWrd} ,'%')
+			</when>
+			<when test="searchCnd1 == 2">
+				AND content LIKE CONCAT('%',#{searchWrd} ,'%')
+			</when>
+			<when test="searchCnd1 == 0">
+				AND(
+				title LIKE CONCAT('%',#{searchWrd} ,'%') or
+				content LIKE CONCAT('%',#{searchWrd} ,'%')
+				)
+			</when>
+		</choose>
+	</select>
+
+	<insert id="noticeDAO.noticeWriteAction">
+		INSERT INTO tb_board(
+		
+		title
+		,content
+		,userId
+		,fix)
+		
+		VALUES(
+		#{title}
+		,#{content}
+		,#{userId}
+		<choose>
+			<when test="fix == 1">
+				,#{fix}
+			</when>
+			<otherwise>
+				,0
+			</otherwise>
+		</choose>
+		)
+	</insert>
+
+	<select id="noticeDAO.selectNoticeDetail" resultType="egovMap">
+		SELECT
+		
+		bno
+		,title
+		,content
+		,userId
+		,viewCnt
+		,fix
+		,DATE_FORMAT(regDate,'%Y-%m-%d') as	regDate
+
+		FROM tb_board
+
+		WHERE bno = #{bno}
+	</select>
+
+	<delete id="noticeDAO.noticeDeleteAction">
+		DELETE
+
+		FROM tb_board
+
+		WHERE bno = #{bno}
+	</delete>
+
+	<update id="noticeDAO.noticeUpdateAction">
+		UPDATE tb_board SET
+
+		title = #{title},
+		content = #{content},
+		userId = #{userId},
+		regDate = NOW(),
+		
+		<choose>
+			<when test="fix == 1">
+				fix = #{fix}
+			</when>
+			<otherwise>
+				fix = '0'
+			</otherwise>
+		</choose>
+
+		WHERE bno = #{bno}
+	</update>
+
+	<update id="noticeDAO.noticeViewCount" parameterType="int">
+		UPDATE
+		
+		tb_board
+
+		SET viewCnt = viewCnt + 1
+
+		WHERE bno = #{bno}
+	</update>
+
+	<select id="noticeDAO.selectNoticeDetailPre" resultType="egovMap">
+	<![CDATA[
+		SELECT
+		
+		bno,
+		title
+		
+		FROM tb_board
+		 
+		WHERE bno < #{bno}
+		 
+		ORDER BY bno DESC
+		 
+		LIMIT 1
+	]]>
+	</select>
+
+	<select id="noticeDAO.selectNoticeDetailNext" resultType="egovMap">
+	<![CDATA[
+		SELECT
+		
+		bno,
+		title
+			  	
+		FROM 	tb_board
+		
+		WHERE	bno > #{bno}
+		
+		ORDER BY bno ASC
+		 
+		LIMIT 1
+	]]>
+	</select>
+</mapper>
