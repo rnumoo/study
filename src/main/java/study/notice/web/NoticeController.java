@@ -1,6 +1,7 @@
 package study.notice.web;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import egovframework.com.cmm.SessionVO;
+import egovframework.com.cmm.service.EgovFileMngService;
+import egovframework.com.cmm.service.EgovFileMngUtil;
+import egovframework.com.cmm.service.FileVO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import study.notice.service.NoticeService;
@@ -24,6 +31,12 @@ public class NoticeController {
 	//name에 해당하는 bean의 이름을 검색해서 의존성 주입
 	@Resource(name = "noticeService")		
     private NoticeService noticeService;
+	
+	@Resource(name = "EgovFileMngService")
+    private EgovFileMngService fileMngService;
+
+    @Resource(name = "EgovFileMngUtil")
+    private EgovFileMngUtil fileUtil;
 
 	// 공지사항 리스트
 	@RequestMapping(value = "noticeList.do")
@@ -59,15 +72,11 @@ public class NoticeController {
     public String noticeView(NoticeVO noticeVO, SearchVO searchVO, Model model) throws Exception {
 
         EgovMap resultVO = noticeService.selectNoticeDetail(noticeVO);
-        EgovMap pre = noticeService.selectNoticeDetailPre(noticeVO);
-        EgovMap next = noticeService.selectNoticeDetailNext(noticeVO);
-
-        noticeService.noticeViewCount(noticeVO);
-
+        
         model.addAttribute("searchVO", searchVO);
-        model.addAttribute("resultVO", resultVO);
-        model.addAttribute("pre", pre);
-        model.addAttribute("next", next);
+        model.addAttribute("resultVO", resultVO.get("noticeDetail"));
+        model.addAttribute("pre", resultVO.get("noticeDetailPre"));
+        model.addAttribute("next", resultVO.get("noticeDetailNext"));
 
         return "study/notice/noticeView";
     }
@@ -83,8 +92,19 @@ public class NoticeController {
 
     // 공지사항 글 등록
     @RequestMapping(value = "noticeWriteAction.do")
-    public String noticeInsert(NoticeVO noticeVO, Model model) throws Exception {
+    public String noticeInsert(NoticeVO noticeVO, final MultipartHttpServletRequest multiRequest, SessionVO sessionVO, Model model) throws Exception {
         
+    	final Map<String, MultipartFile> files = multiRequest.getFileMap();
+
+        String atchFileId = "";
+
+        if (!files.isEmpty()) {
+
+            List<FileVO> result = fileUtil.parseFileInf(files, "BBS_", 0, atchFileId, "");
+            atchFileId = fileMngService.insertFileInfs(result);
+            noticeVO.setAtchFileId(atchFileId);
+        }
+    	
     	noticeService.noticeWriteAction(noticeVO);
         
     	return "redirect:/notice/noticeList.do";
@@ -94,11 +114,11 @@ public class NoticeController {
 
     @RequestMapping(value = "noticeUpdatePage.do")
     public String noticeModify(NoticeVO noticeVO, Model model) throws Exception {
-
-        EgovMap resultVO = noticeService.selectNoticeDetail(noticeVO);
-
+    	
+    	EgovMap resultVO = noticeService.selectNoticeDetail(noticeVO);
+    	
         model.addAttribute("flag", "update");
-        model.addAttribute("resultVO", resultVO);
+        model.addAttribute("resultVO", resultVO.get("noticeDetail"));
 
         return "study/notice/noticeWrite";
     }
@@ -106,7 +126,25 @@ public class NoticeController {
     // 공지사항 글 수정
 
     @RequestMapping(value = "noticeUpdateAction.do")
-    public String noticeUpdate(NoticeVO noticeVO, SearchVO searchVO, Model model) throws Exception {
+    public String noticeUpdate(NoticeVO noticeVO, SearchVO searchVO, final MultipartHttpServletRequest multiRequest, Model model) throws Exception {
+        
+    	final Map<String, MultipartFile> files = multiRequest.getFileMap();
+
+        String atchFileId = noticeVO.getAtchFileId();
+
+        if (!files.isEmpty()) {
+            if ("".equals(atchFileId) || atchFileId == null) {
+                List<FileVO> result = fileUtil.parseFileInf(files, "BBS_", 0, atchFileId, "");
+                atchFileId = fileMngService.insertFileInfs(result);
+                noticeVO.setAtchFileId(atchFileId);
+            } else {
+                FileVO fvo = new FileVO();
+                fvo.setAtchFileId(atchFileId);
+                int cnt = fileMngService.getMaxFileSN(fvo);
+                List<FileVO> _result = fileUtil.parseFileInf(files, "BBS_", cnt, atchFileId, "");
+                fileMngService.updateFileInfs(_result);
+            }
+        }
         
     	noticeService.noticeUpdateAction(noticeVO);
 

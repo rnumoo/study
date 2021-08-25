@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -85,7 +87,13 @@ public class EgovFileMngUtil {
 		} else {
 			atchFileIdString = atchFileId;
 		}
+		
+		DateFormat format = new SimpleDateFormat("yyyyMMdd");
 
+        Date nowDate = new Date();
+
+        String toDate = format.format(nowDate);
+        
 		File saveFolder = new File(EgovWebUtil.filePathBlackList(storePathString));
 
 		if (!saveFolder.exists() || saveFolder.isFile()) {
@@ -131,7 +139,7 @@ public class EgovFileMngUtil {
 			
 			fvo = new FileVO();
 			fvo.setFileExtsn(fileExt);
-			fvo.setFileStreCours(storePathString);
+			fvo.setFileStreCours(storePathString + toDate);
 			fvo.setFileMg(Long.toString(size));
 			fvo.setOrignlFileNm(orginFileName);
 			fvo.setStreFileNm(newName);

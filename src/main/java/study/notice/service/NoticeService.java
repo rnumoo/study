@@ -20,6 +20,7 @@ public interface NoticeService {
 	public void noticeWriteAction(NoticeVO noticeVO)throws Exception;
 	
 	//글 내용 조회
+	//public EgovMap selectNoticeDetail(NoticeVO noticeVO)throws Exception;
 	public EgovMap selectNoticeDetail(NoticeVO noticeVO)throws Exception;
 	
 	//수정한 글을 db에 업데이트
@@ -27,15 +28,4 @@ public interface NoticeService {
 	
 	//글 삭제
 	public void noticeDeleteAction(NoticeVO noticeVO)throws Exception;
-	
-	//글 내용 확인 할 때마다 조회수+1 업데이트
-	public void noticeViewCount(NoticeVO noticeVO) throws Exception;
-	
-	//글 내용 확인 화면에서 다음글 조회
-	public EgovMap selectNoticeDetailNext(NoticeVO noticeVO) throws Exception;
-	
-	//글 내용 확인 화면에서 이전글 조회
-	public EgovMap selectNoticeDetailPre(NoticeVO noticeVO) throws Exception;
-
-	
 }

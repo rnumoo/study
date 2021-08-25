@@ -8,6 +8,7 @@
 		bno
 		,title
 		,content
+		,atch_file_id
 		,userId
 		,viewCnt
 		,fix
@@ -79,12 +80,14 @@
 		title
 		,content
 		,userId
+		,atch_file_id
 		,fix)
 		
 		VALUES(
 		#{title}
 		,#{content}
 		,#{userId}
+		,#{atchFileId}
 		<choose>
 			<when test="fix == 1">
 				,#{fix}
@@ -102,6 +105,7 @@
 		bno
 		,title
 		,content
+		,atch_file_id
 		,userId
 		,viewCnt
 		,fix
@@ -125,6 +129,7 @@
 
 		title = #{title},
 		content = #{content},
+		atch_file_id = #{atchFileId},
 		userId = #{userId},
 		regDate = NOW(),
 		
@@ -139,11 +144,9 @@
 
 		WHERE bno = #{bno}
 	</update>
-
+	
 	<update id="noticeDAO.noticeViewCount" parameterType="int">
-		UPDATE
-		
-		tb_board
+		UPDATE tb_board
 
 		SET viewCnt = viewCnt + 1
 

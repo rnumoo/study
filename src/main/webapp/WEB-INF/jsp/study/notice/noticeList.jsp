@@ -31,9 +31,7 @@
 </script>
 
 <form name="noticeList" method="post">
-	<%-- pagiIndex --%>
 	<input type="hidden" name="pageIndex" value="${searchVO.pageIndex}" />
-	<%-- bno --%>
 	<input type="hidden" name="bno" />
 
 	<!-- s:container -->
@@ -107,7 +105,15 @@
 							<tr class="notice_top">
 								<td><span>공지</span></td>
 								<td><a href="#LINK" onclick="fn_detail('${resultList.bno}')"><c:out value="${resultList.title}" /></a></td>
-								<td></td>
+								<td>
+	                            <c:choose>
+	                                <c:when test="${empty resultList.atchFileId}">
+	                                </c:when>
+	                                <c:otherwise>
+	                                	<img src="${pageContext.request.contextPath}/images/study/ico_list_file.png">
+	                                </c:otherwise>
+	                            </c:choose>
+	                        	</td>
 								<td><c:out value="${resultList.userId}" /></td>
 								<td><c:out value="${resultList.regDate}" /></td>
 								<td><c:out value="${resultList.viewCnt}" /></td>
@@ -117,7 +123,15 @@
 							<tr>
 								<td><c:out value="${paginationInfo.totalRecordCount - ((paginationInfo.currentPageNo-1) * paginationInfo.recordCountPerPage + status.index) }" /></td>
 								<td><a href="#LINK" onclick="fn_detail('${resultList.bno}')"><c:out value="${resultList.title}" /></a></td>
-								<td></td>
+								<td>
+	                             <c:choose>
+	                                <c:when test="${empty resultList.atchFileId}">
+	                                </c:when>
+	                                <c:otherwise>
+	                                	<img src="${pageContext.request.contextPath}/images/study/ico_list_file.png">
+	                                </c:otherwise>
+	                            </c:choose>
+	                        	</td>
 								<td><c:out value="${resultList.userId}" /></td>
 								<td><c:out value="${resultList.regDate}" /></td>
 								<td><c:out value="${resultList.viewCnt}" /></td>

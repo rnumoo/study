@@ -33,7 +33,9 @@ function fn_detail(no) {
 	document.noticeDetail.submit();
 }
 </script>
-<form name="noticeDetail" method="post">
+<form name="noticeDetail" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="searchCnd1" value="${searchVO.searchCnd1}" /> 
+	<input type="hidden" name="searchWrd" value="${searchVO.searchWrd}" />
 	<input type="hidden" name="bno" value="${resultVO.bno}" />
         <!-- s:container -->
         <div class="container">
@@ -82,6 +84,12 @@ function fn_detail(no) {
                             <td><c:out value="${resultVO.regDate}"/></td>
                         </tr>
                         <tr>
+                            <th>첨부파일</th>
+                            <td colspan="3" class="file_list">
+								<c:import url="/cmm/fms/selectFileInfs.do" charEncoding="utf-8">
+								    <c:param name="param_atchFileId" value="${resultVO.atchFileId}"/>
+							    </c:import>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="4" class="table_text"><c:out value="${resultVO.content}"/></td>

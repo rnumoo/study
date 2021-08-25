@@ -69,7 +69,8 @@ function fn_checked(obj){
 	}
 } 
 </script>
-<form name="frm" method="post" action="<c:url value='/notice/noticeWriteAction.do'/>">
+<form name="frm" method="post" enctype="multipart/form-data" action="<c:url value='/notice/noticeWriteAction.do'/>">
+	<input type="hidden" name="atchPosblFileNumber" id="atchPosblFileNumber" value="5" />
 	<c:if test="${flag eq 'update' }"><input type="hidden" name="bno" value="${resultVO.bno}"/></c:if> 
         <!-- s:container -->
         <div class="container">
@@ -120,9 +121,26 @@ function fn_checked(obj){
                             </td>
                         </tr>
                         <tr>
+                            <th>첨부파일</th>
+                            <td colspan="3" class="file">
+								<c:if test="${not empty resultVO.atchFileId}">
+									<c:import charEncoding="utf-8" url="/cmm/fms/selectFileInfsForUpdate.do" >
+										<c:param name="param_atchFileId" value="${resultVO.atchFileId}" />
+									</c:import>		
+								</c:if>
+								<c:if test="${resultVO.atchFileId == ''}">
+									<input type="hidden" name="fileListCnt" value="" />
+								</c:if>
+								<div>
+									<div>
+										<input name="file_1" id="egovComFileUploader" type="file" multiple /> 
+									</div>
+								</div>
+                            </td>
                         </tr>
                         <tr>
                         	<td colspan="3">
+                        	<div id="egovComFileList"></div>
                         	</td>
                         </tr>
                         <tr>
@@ -144,5 +162,17 @@ function fn_checked(obj){
         </div>
         <!-- e:container -->
 </form>
+
+<script src="${pageContext.request.contextPath}/js/egovframework/com/cmm/fms/EgovMultiFile.js"></script>
+
+<script >
+var maxFileNum = document.getElementById('atchPosblFileNumber').value;
+if(maxFileNum == null || maxFileNum == "") {
+	maxFileNum = 3;
+}
+var multi_selector = new MultiSelector( document.getElementById( 'egovComFileList' ));
+multi_selector.addElement( document.getElementById( 'egovComFileUploader' ) );
+var file = document.getElementById('file');
+</script>
 
 <c:import url="/EgovPageLink.do?link=study/inc/footer" />

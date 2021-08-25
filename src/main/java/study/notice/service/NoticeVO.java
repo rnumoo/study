@@ -8,6 +8,7 @@ public class NoticeVO {
 	private int viewCnt;
 	private String fix;
 	private String regDate;
+	private String atchFileId;
 	
 	public int getBno() {
 		return bno;
@@ -50,6 +51,12 @@ public class NoticeVO {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	public String getAtchFileId() {
+		return atchFileId;
+	}
+	public void setAtchFileId(String atchFileId) {
+		this.atchFileId = atchFileId;
 	}
 
 }
