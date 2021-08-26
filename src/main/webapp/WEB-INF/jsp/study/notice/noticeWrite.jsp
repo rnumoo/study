@@ -70,7 +70,8 @@ function fn_checked(obj){
 } 
 </script>
 <form name="frm" method="post" enctype="multipart/form-data" action="<c:url value='/notice/noticeWriteAction.do'/>">
-	<input type="hidden" name="atchPosblFileNumber" id="atchPosblFileNumber" value="5" />
+	<input type="hidden" name="returnUrl" value="<c:url value='/notice/noticeWriteAction.do'/>"/>
+	<input type="hidden" name="atchPosblFileNumber" id="atchPosblFileNumber" value="3" />
 	<c:if test="${flag eq 'update' }"><input type="hidden" name="bno" value="${resultVO.bno}"/></c:if> 
         <!-- s:container -->
         <div class="container">
@@ -133,7 +134,7 @@ function fn_checked(obj){
 								</c:if>
 								<div>
 									<div>
-										<input name="file_1" id="egovComFileUploader" type="file" multiple /> 
+										<input name="file_1" id="egovComFileUploader" type="file" multiple />
 									</div>
 								</div>
                             </td>
@@ -166,13 +167,14 @@ function fn_checked(obj){
 <script src="${pageContext.request.contextPath}/js/egovframework/com/cmm/fms/EgovMultiFile.js"></script>
 
 <script >
-var maxFileNum = document.getElementById('atchPosblFileNumber').value;
+
+var maxFileNum = document.frm.atchPosblFileNumber.value;
 if(maxFileNum == null || maxFileNum == "") {
 	maxFileNum = 3;
 }
-var multi_selector = new MultiSelector( document.getElementById( 'egovComFileList' ));
+var multi_selector = new MultiSelector( document.getElementById( 'egovComFileList' ), maxFileNum);
 multi_selector.addElement( document.getElementById( 'egovComFileUploader' ) );
-var file = document.getElementById('file');
+
 </script>
 
 <c:import url="/EgovPageLink.do?link=study/inc/footer" />

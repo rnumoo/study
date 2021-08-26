@@ -88,12 +88,6 @@ public class EgovFileMngUtil {
 			atchFileIdString = atchFileId;
 		}
 		
-		DateFormat format = new SimpleDateFormat("yyyyMMdd");
-
-        Date nowDate = new Date();
-
-        String toDate = format.format(nowDate);
-        
 		File saveFolder = new File(EgovWebUtil.filePathBlackList(storePathString));
 
 		if (!saveFolder.exists() || saveFolder.isFile()) {
@@ -139,7 +133,7 @@ public class EgovFileMngUtil {
 			
 			fvo = new FileVO();
 			fvo.setFileExtsn(fileExt);
-			fvo.setFileStreCours(storePathString + toDate);
+			fvo.setFileStreCours(storePathString);
 			fvo.setFileMg(Long.toString(size));
 			fvo.setOrignlFileNm(orginFileName);
 			fvo.setStreFileNm(newName);
