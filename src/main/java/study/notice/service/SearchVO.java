@@ -6,9 +6,11 @@ public class SearchVO {
 	/** 현재페이지 */
 	private int pageIndex = 1;
 	/** 페이징 SQL 조건절에 사용되는 시작 행번호(0부터 시작) */
-	private int firstIndex = 1;
+	private int firstIndex = 0;
 	/** 페이지당 레코드 개수(한 페이지에 보여질 최대 글 수) */
 	private int recordCountPerPage = 10;
+	/**전체 게시글 건수**/
+	private int totalRecordCount = 1;
 	/** 검색종류1 */
 	private String searchCnd1="";
 	/** 검색종류2 */
@@ -65,5 +67,11 @@ public class SearchVO {
 	}
 	public void setSearchWrd(String searchWrd) {
 		this.searchWrd = searchWrd;
+	}
+	public int getTotalRecordCount() {
+		return totalRecordCount;
+	}
+	public void setTotalRecordCount(int totalRecordCount) {
+		this.totalRecordCount = totalRecordCount;
 	}
 }

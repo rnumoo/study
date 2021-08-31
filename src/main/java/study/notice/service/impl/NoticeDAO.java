@@ -1,8 +1,11 @@
 package study.notice.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
+
 import egovframework.com.cmm.service.impl.EgovComAbstractDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import study.notice.service.NoticeVO;
@@ -52,4 +55,5 @@ public class NoticeDAO extends EgovComAbstractDAO{
 	public EgovMap selectNoticeDetailPre(NoticeVO noticeVO) throws Exception {
 		return selectOne("noticeDAO.selectNoticeDetailPre", noticeVO);
 	}
+	
 }

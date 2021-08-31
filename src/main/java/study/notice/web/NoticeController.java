@@ -5,17 +5,21 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import egovframework.com.cmm.service.EgovFileMngService;
 import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.FileVO;
+import egovframework.com.cmm.util.Pager;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import study.notice.service.NoticeService;
@@ -164,5 +168,52 @@ public class NoticeController {
         
         return "redirect:/notice/noticeList.do";
     }
+    
+    // ajax 공지사항 리스트
+    @RequestMapping(value = "noticeList2.do")
+    public String noticeList2(@ModelAttribute("searchVO") SearchVO searchVO, Model model) throws Exception {
 
+    	PaginationInfo paginationInfo = new PaginationInfo();
+        
+        paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
+        paginationInfo.setRecordCountPerPage(searchVO.getRecordCountPerPage());
+        paginationInfo.setPageSize(searchVO.getPageSize());
+        int totalCnt = noticeService.selectNoticeCnt(searchVO);
+        paginationInfo.setTotalRecordCount(totalCnt);
+        
+        searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+        searchVO.setPageIndex(paginationInfo.getCurrentPageNo());
+        searchVO.setTotalRecordCount(paginationInfo.getTotalRecordCount());
+        
+        List<?> listData = noticeService.selectNoticeList(searchVO);
+        List<?> fix = noticeService.selectNoticeListFix(searchVO);
+        
+        model.addAttribute("fix", fix);
+        model.addAttribute("list", listData);
+        model.addAttribute("paginationInfo", paginationInfo);
+
+        return "study/notice/noticeList2";
+    }
+    
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "listPage.do", method = { RequestMethod.GET, RequestMethod.POST })
+    public void noticeAjax(@ModelAttribute("searchVO") SearchVO searchVO, Model model, HttpServletResponse response) throws Exception {
+    	
+        List<?> listData = noticeService.selectNoticeList(searchVO);
+        
+        int pageIndex = searchVO.getPageIndex();
+        int totalCnt = noticeService.selectNoticeCnt(searchVO);
+		int pageSize = searchVO.getPageSize();
+		int RecordCountPerPage = searchVO.getRecordCountPerPage();
+		Pager pager = new Pager(pageIndex, totalCnt, pageSize, RecordCountPerPage);
+        
+        JSONObject viewData = new JSONObject();
+        viewData.put("listData", listData);
+        viewData.put("pager", pager.toHashMap());
+        
+        //응답시 한글처리
+        response.setContentType("text/html;charset=UTF-8");
+        //응답으로 내보낼 출력 스트림을 얻어낸 후 스트림에 텍스트를 기록(텍스트로 json 내용 출력)
+        response.getWriter().print(viewData.toString());
+    }
 }

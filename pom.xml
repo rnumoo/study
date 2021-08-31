@@ -90,6 +90,12 @@
             <artifactId>egovframework.rte.fdl.idgnr</artifactId>
             <version>${egovframework.rte.version}</version>
         </dependency>
+        
+        <dependency>
+           <groupId>com.googlecode.json-simple</groupId>
+           <artifactId>json-simple</artifactId>
+           <version>1.1.1</version>
+        </dependency>
 
         <!--
         JBoss의 경우는 <body-context>부분을 empty로 수정하여 적용하시면 되며,
@@ -452,6 +458,16 @@
             <version>2.5.1</version>
         </dependency>               
         -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.5.1</version>
+        </dependency>
         
         <!-- LDAP조직도관리 관련 라이브러리  -->
         <dependency>
