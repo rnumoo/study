@@ -211,8 +211,7 @@ public class NoticeController {
         viewData.put("listData", listData);
         viewData.put("pager", pager.toHashMap());
         
-        //응답시 한글처리
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
         //응답으로 내보낼 출력 스트림을 얻어낸 후 스트림에 텍스트를 기록(텍스트로 json 내용 출력)
         response.getWriter().print(viewData.toString());
     }
