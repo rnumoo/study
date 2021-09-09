@@ -1,11 +1,11 @@
 package study.notice.service.impl;
 
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
+import egovframework.com.cmm.service.FileVO;
 import egovframework.com.cmm.service.impl.EgovComAbstractDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import study.notice.service.NoticeVO;
@@ -56,4 +56,17 @@ public class NoticeDAO extends EgovComAbstractDAO{
 		return selectOne("noticeDAO.selectNoticeDetailPre", noticeVO);
 	}
 	
+	public List<FileVO> selectFileInfs(FileVO fileVO) throws Exception {
+		return (List<FileVO>) list("noticeDAO.selectFileList", fileVO);
+	}
+	
+	public void deleteFileInfs(List<FileVO> listDelFileVO) throws Exception {
+		Iterator<?> iter = listDelFileVO.iterator();
+		FileVO vo;
+		while (iter.hasNext()) {
+			vo = (FileVO) iter.next();
+
+			delete("noticeDAO.deleteFileDetail", vo);
+		}
+	}
 }

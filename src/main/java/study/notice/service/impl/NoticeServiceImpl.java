@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import egovframework.com.cmm.service.FileVO;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import study.notice.service.NoticeService;
@@ -53,13 +54,19 @@ public class NoticeServiceImpl extends EgovAbstractServiceImpl implements Notice
 		return noticeDAO.selectNoticeCnt(searchVO);
 	}
 
-	public void noticeUpdateAction(NoticeVO noticeVO) throws Exception {
+	public void noticeUpdateAction(NoticeVO noticeVO, List<FileVO> listDelFileVO) throws Exception {
 		
 		noticeDAO.noticeUpdateAction(noticeVO);
+		noticeDAO.deleteFileInfs(listDelFileVO);
 	}
 
 	public void noticeDeleteAction(NoticeVO noticeVO) throws Exception {
 		
 		noticeDAO.noticeDeleteAction(noticeVO);
 	}
+	
+	public List<FileVO> selectFileInfs(FileVO fileVO) throws Exception {
+		return noticeDAO.selectFileInfs(fileVO);
+	}
+	
 }

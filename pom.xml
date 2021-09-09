@@ -459,6 +459,13 @@
         </dependency>               
         -->
         
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+		    <groupId>com.google.code.gson</groupId>
+		    <artifactId>gson</artifactId>
+		    <version>2.8.5</version>
+		</dependency>
+        
         <!-- LDAP조직도관리 관련 라이브러리  -->
         <dependency>
             <groupId>org.springframework.ldap</groupId>

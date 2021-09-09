@@ -39,8 +39,8 @@
         <a href="#LINK" class="logo"><img src="${pageContext.request.contextPath}/images/study/logo.png" alt="구미전자정보기술원 구미형 소재·부품 융합얼라이언스 로고"></a>
         <div class="gnb_area">
             <ul class="submenu">
-                <li><a href="#LINK">회원가입</a></li>
-                <li><a href="#LINK">로그인</a></li>
+                <li><a href="<c:url value="/login/userSignUp.do"/>">회원가입</a></li>
+                <li><a href="<c:url value="/login/login.do"/>">로그인</a></li>
             </ul>
             <div class="gnb_box">
                 <ul class="gnb">

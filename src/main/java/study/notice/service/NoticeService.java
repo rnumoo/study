@@ -2,6 +2,7 @@ package study.notice.service;
 
 import java.util.List;
 
+import egovframework.com.cmm.service.FileVO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 
@@ -24,8 +25,11 @@ public interface NoticeService {
 	public EgovMap selectNoticeDetail(NoticeVO noticeVO)throws Exception;
 	
 	//수정한 글을 db에 업데이트
-	public void noticeUpdateAction(NoticeVO noticeVO)throws Exception;
+	public void noticeUpdateAction(NoticeVO noticeVO, List<FileVO> listDelFileVO)throws Exception;
 	
 	//글 삭제
 	public void noticeDeleteAction(NoticeVO noticeVO)throws Exception;
+	
+	public List<FileVO> selectFileInfs(FileVO fileVO) throws Exception;
+	
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="studyLoginDAO">
+	
+	<insert id="studyLoginDAO.insertUserInfo">
+		INSERT INTO userInfo(
+		
+		userId,
+		userName,
+		userPw,
+		userPh,
+		userMail
+		)
+		
+		VALUES(
+		#{userId}
+		,#{userName}
+		,#{userPw}
+		,#{userPh}
+		,#{userMail}
+		)
+	</insert>
+	
+	<!-- 아이디 중복체크 -->
+	<select id="studyLoginDAO.idConfirm" resultType="int">
+		SELECT COUNT(*)
+		FROM userInfo
+		WHERE userId = #{userId}
+	</select>
+	
+	<select id="studyLoginDAO.loginAction" resultType="LoginVO">
+        SELECT  userId,
+				userName,
+				userPw,
+				userPh,
+				userMail
+                
+        FROM    userInfo
+        WHERE 	userId = #{userId}
+        AND 	userPw = #{userPw}
+        LIMIT 1
+    </select>
+	
+</mapper>

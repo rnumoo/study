@@ -8,6 +8,8 @@
 <c:import url="/EgovPageLink.do?link=study/inc/header" />
 <script>
 
+var arrFileSn = new Array();
+
 function fn_save(){
 	var url = "";
 	
@@ -24,6 +26,8 @@ function fn_save(){
 	if(!confirm("저장하시겠습니까?")){
 		return;
 	}
+	
+	
 	
 	document.frm.action = url;
 	document.frm.submit();
@@ -68,10 +72,28 @@ function fn_checked(obj){
 		obj.value = "0";
 	}
 } 
+
+function fn_egov_deleteFile(atchFileId, fileSn, delTrName) {
+	
+	var objDelTr = document.getElementById(delTrName);
+	objDelTr.parentNode.removeChild(objDelTr);
+	
+	arrFileSn.push(fileSn);
+	
+	$("#fileSn").val(arrFileSn);
+
+}
+
 </script>
+<script src="${pageContext.request.contextPath}/js/egovframework/com/cmm/fms/EgovMultiFiles.js"></script>
+
 <form name="frm" method="post" enctype="multipart/form-data" action="<c:url value='/notice/noticeWriteAction.do'/>">
 	<input type="hidden" name="returnUrl" value="<c:url value='/notice/noticeWriteAction.do'/>"/>
 	<input type="hidden" name="atchPosblFileNumber" id="atchPosblFileNumber" value="3" />
+	<input type="hidden" name="atchFileId" value="<c:out value='${atchFileId}'/>">
+	<input type="hidden" name="fileSn" id="fileSn" value="">
+	<input type="hidden" name="fileListCnt" id="fileListCnt" value="<c:out value='${fileListCnt}'/>">
+	<c:set var="fileCount" value="${fn:length(fileList) }" />
 	<c:if test="${flag eq 'update' }"><input type="hidden" name="bno" value="${resultVO.bno}"/></c:if> 
         <!-- s:container -->
         <div class="container">
@@ -125,23 +147,40 @@ function fn_checked(obj){
                             <th>첨부파일</th>
                             <td colspan="3" class="file">
 								<c:if test="${not empty resultVO.atchFileId}">
-									<c:import charEncoding="utf-8" url="/cmm/fms/selectFileInfsForUpdate.do" >
-										<c:param name="param_atchFileId" value="${resultVO.atchFileId}" />
-									</c:import>		
+								<table id="egov_file_view_table" style="border: 0px solid #666;">
+									<c:forEach var="fileVO" items="${fileList}" varStatus="status">
+										<tr id="egov_file_view_table_tr_${status.count}">
+											<td	style="border: 0px solid #666; text-align: left; padding: 0 0 0 0; margin: 0 0 0 0;" height="22">
+													<c:if test="${flag eq 'update'}">
+														<c:out value="${fileVO.orignlFileNm}" />&nbsp;[<c:out value="${fileVO.fileMg}" />&nbsp;byte]
+														<img src="<c:url value='/images/egovframework/com/cmm/btn/btn_del.png' />" class="cursor"
+															onClick="fn_egov_deleteFile('<c:out value="${fileVO.atchFileId}"/>','<c:out value="${fileVO.fileSn}"/>','egov_file_view_table_tr_${status.count}');"
+															alt="<spring:message code="title.attachedFileDelete" />">
+													</c:if>
+											</td>
+										</tr>
+									</c:forEach>
+									<c:if test="${fn:length(fileList) == 0}">
+										<tr>
+											<td	style="border: 0px solid #666; padding: 0 0 0 0; margin: 0 0 0 0;"></td>
+										</tr>
+									</c:if>
+								</table>
 								</c:if>
 								<c:if test="${resultVO.atchFileId == ''}">
 									<input type="hidden" name="fileListCnt" value="" />
 								</c:if>
 								<div>
 									<div>
-										<input name="file_1" id="egovComFileUploader" type="file" multiple />
+										<input name="file_1" id="egovComFileUploader" type="file" multiple/>
 									</div>
 								</div>
                             </td>
                         </tr>
                         <tr>
                         	<td colspan="3">
-                        	<div id="egovComFileList"></div>
+                        	<div id="egovComFileList">
+                        	</div>
                         	</td>
                         </tr>
                         <tr>
@@ -164,7 +203,7 @@ function fn_checked(obj){
         <!-- e:container -->
 </form>
 
-<script src="${pageContext.request.contextPath}/js/egovframework/com/cmm/fms/EgovMultiFile.js"></script>
+
 
 <script >
 

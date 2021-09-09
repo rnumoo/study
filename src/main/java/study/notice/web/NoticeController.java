@@ -1,5 +1,6 @@
 package study.notice.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -97,8 +98,9 @@ public class NoticeController {
     public String noticeInsert(@ModelAttribute("noticeVO") NoticeVO noticeVO, final MultipartHttpServletRequest multiRequest, Model model) throws Exception {
         
     	//multiRequest의 파라미터명을 키로, 파일 객체를 value로 하는 map(key : file_0, value : 파일네임...)
-    	final Map<String, MultipartFile> files = multiRequest.getFileMap();
-
+    	//final Map<String, MultipartFile> files = multiRequest.getFileMap();
+    	final List<MultipartFile> files = multiRequest.getFiles("file_1");
+    	
         String atchFileId = "";
 
         if (!files.isEmpty()) {
@@ -120,12 +122,21 @@ public class NoticeController {
     // 공지사항 글 수정 페이지
 
     @RequestMapping(value = "noticeUpdatePage.do")
-    public String noticeModify(@ModelAttribute("noticeVO") NoticeVO noticeVO, Model model) throws Exception {
+    public String noticeModify(@ModelAttribute("noticeVO") NoticeVO noticeVO, @ModelAttribute("fileVO") FileVO fileVO, Model model) throws Exception {
     	
     	EgovMap resultVO = noticeService.selectNoticeDetail(noticeVO);
     	
         model.addAttribute("flag", "update");
         model.addAttribute("resultVO", resultVO.get("noticeDetail"));
+        
+        String atchFileId = noticeVO.getAtchFileId();
+
+		fileVO.setAtchFileId(atchFileId);
+		List<FileVO> result = noticeService.selectFileInfs(fileVO);
+
+		model.addAttribute("fileList", result);
+		model.addAttribute("fileListCnt", result.size());
+		model.addAttribute("atchFileId", atchFileId);
 
         return "study/notice/noticeWrite";
     }
@@ -135,8 +146,27 @@ public class NoticeController {
     @RequestMapping(value = "noticeUpdateAction.do")
     public String noticeUpdate(@ModelAttribute("noticeVO") NoticeVO noticeVO, @ModelAttribute("searchVO") SearchVO searchVO, final MultipartHttpServletRequest multiRequest, Model model) throws Exception {
         
-    	final Map<String, MultipartFile> files = multiRequest.getFileMap();
-
+    	String delFileId = multiRequest.getParameter("atchFileId");
+    	String delFileSn = multiRequest.getParameter("fileSn");
+    	
+    	String[] listDelFileSn = delFileSn.split(",");
+    	
+    	
+    	List<FileVO> listDelFileVO = new ArrayList();
+    	
+    	for(int i = 0; i < listDelFileSn.length; i++) {
+    		
+    		FileVO delFvo = new FileVO();
+    		
+    		delFvo.setAtchFileId(delFileId);
+    		delFvo.setFileSn(listDelFileSn[i]);
+    		
+    		listDelFileVO.add(i, delFvo);
+    	}
+    	
+    	//final Map<String, MultipartFile> files = multiRequest.getFileMap();
+    	final List<MultipartFile> files = multiRequest.getFiles("file_1");
+    	
         String atchFileId = noticeVO.getAtchFileId();
 
         if (!files.isEmpty()) {
@@ -155,7 +185,7 @@ public class NoticeController {
             }
         }
         
-    	noticeService.noticeUpdateAction(noticeVO);
+    	noticeService.noticeUpdateAction(noticeVO, listDelFileVO);
 
         return "redirect:/notice/noticeList.do";
     }
