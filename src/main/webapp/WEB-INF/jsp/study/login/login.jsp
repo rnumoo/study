@@ -92,8 +92,8 @@ function fn_loginAction() {
 				alert(data.loginFailMsg);
 			}
 		},
-		error: function(){
-			alert("error");
+		error: function(request, status, error){
+			alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n"+"error: " + error);
 		}
 	});
 }

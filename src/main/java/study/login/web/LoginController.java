@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.google.gson.Gson;
 
@@ -79,7 +81,7 @@ public class LoginController {
         String userId = request.getParameter("userId");
 
         int confirm = (int) studyLoginService.idConfirm(userId);
-
+        
         if (confirm > 0) {
             rtn.put("success", Boolean.TRUE);
             rtn.put("result", Boolean.FALSE);
@@ -147,6 +149,14 @@ public class LoginController {
     @RequestMapping(value = "/main.do")
     public String main() throws Exception {
         return "study/main/main";
+    }
+    
+    @RequestMapping(value = "/login/logout.do")
+    public String logout() throws Exception {
+    	
+        RequestContextHolder.getRequestAttributes().setAttribute("userLoginVO", null, RequestAttributes.SCOPE_SESSION);
+
+        return "redirect:/main.do";
     }
 
 }

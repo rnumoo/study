@@ -4,4 +4,5 @@
 
 <c:import url="/EgovPageLink.do?link=study/inc/header" />    
 main page
+<a href="<c:url value="/notice/noticeList.do"/>">게시판</a>
 <c:import url="/EgovPageLink.do?link=study/inc/footer" />

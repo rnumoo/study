@@ -39,8 +39,13 @@
         <a href="#LINK" class="logo"><img src="${pageContext.request.contextPath}/images/study/logo.png" alt="구미전자정보기술원 구미형 소재·부품 융합얼라이언스 로고"></a>
         <div class="gnb_area">
             <ul class="submenu">
-                <li><a href="<c:url value="/login/userSignUp.do"/>">회원가입</a></li>
-                <li><a href="<c:url value="/login/login.do"/>">로그인</a></li>
+            	<c:if test="${ not empty userLoginVO }">
+            		<li><a href="<c:url value="/login/logout.do"/>">로그아웃</a></li>
+            	</c:if>
+            	<c:if test="${ empty userLoginVO }">
+            		<li><a href="<c:url value="/login/userSignUp.do"/>">회원가입</a></li>
+                	<li><a href="<c:url value="/login/login.do"/>">로그인</a></li>
+            	</c:if>
             </ul>
             <div class="gnb_box">
                 <ul class="gnb">

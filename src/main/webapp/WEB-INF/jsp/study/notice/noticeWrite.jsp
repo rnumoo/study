@@ -27,8 +27,6 @@ function fn_save(){
 		return;
 	}
 	
-	
-	
 	document.frm.action = url;
 	document.frm.submit();
 }
