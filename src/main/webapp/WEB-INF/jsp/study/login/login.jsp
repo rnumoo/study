@@ -9,11 +9,11 @@
 <script src="${pageContext.request.contextPath}/js/study/lib/jquery-1.11.3.min.js"></script>
 
 <!-- s:container -->
-        <div> 
+        <div style="width:400px; margin:auto;"> 
             <h1>로그인</h1>
             <p>시스템 이용을 위해 로그인 하시기 바랍니다.</p>
         </div>
-        <div>
+        <div style="width:400px; margin:auto;">
         	<form id="loginForm" name="loginForm" method="post">
         	<input type="hidden" id="userId" name="userId" value="">
         	<input type="hidden" id="userPw" name="userPw" value="">
@@ -86,7 +86,11 @@ function fn_loginAction() {
 				alert("로그인 성공");
 				
 				frm.method = "post";
-				frm.action = "<c:url value='/main.do'/>"
+				if (data.redirectPage){
+					frm.action = "<c:url value='/login/changePw.do'/>"
+				} else {
+					frm.action = "<c:url value='/main.do'/>"
+				}
 				frm.submit();
 			} else {
 				alert(data.loginFailMsg);

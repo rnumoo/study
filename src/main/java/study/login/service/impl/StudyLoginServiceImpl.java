@@ -8,52 +8,61 @@ import org.springframework.stereotype.Service;
 
 import egovframework.com.utl.sim.service.EgovFileScrty;
 import egovframework.rte.fdl.cmmn.EgovAbstractServiceImpl;
-import study.login.service.StudyLoginService;
 import study.login.service.LoginVO;
+import study.login.service.StudyLoginService;
 
 @Service("studyLoginService")
 public class StudyLoginServiceImpl extends EgovAbstractServiceImpl implements StudyLoginService {
-	
-	@Resource(name = "studyLoginDAO")
-	private StudyLoginDAO studyLoginDAO;
-	
-	@Override
-	public void insertUserInfo(LoginVO loginVO) throws Exception {
-		studyLoginDAO.insertUserInfo(loginVO);
-	}
-	
-	public Object idConfirm(Object param) throws Exception {
-		return studyLoginDAO.idConfirm(param);
-	}
-	
-	public LoginVO loginAction(LoginVO loginVO) throws Exception{
-		return studyLoginDAO.loginAction(loginVO);
-	}
-	
-	public LoginVO findIdAction(LoginVO loginVO) throws Exception{
-		return studyLoginDAO.findIdAction(loginVO);
-	}
-	
-	public String findPwAction(LoginVO loginVO) throws Exception{
-		
-		int findPwAction = studyLoginDAO.findPwAction(loginVO);
-		
-		if (findPwAction > 0) {
-			String tempPw = tempPwCreate();
-			
-			String enc = EgovFileScrty.encryptPassword(tempPw, loginVO.getUserId());
-			
-			loginVO.setUserPw(enc);
-			
-			studyLoginDAO.modifyPw(loginVO);
-			
-			return tempPw;
-		} else {
-			return null;
-		}
-	}
-	
-	public static String tempPwCreate() throws Exception {
+
+    @Resource(name = "studyLoginDAO")
+    private StudyLoginDAO studyLoginDAO;
+
+    @Override
+    public void insertUserInfo(LoginVO loginVO) throws Exception {
+        studyLoginDAO.insertUserInfo(loginVO);
+    }
+
+    @Override
+    public Object idConfirm(Object param) throws Exception {
+        return studyLoginDAO.idConfirm(param);
+    }
+
+    @Override
+    public LoginVO loginAction(LoginVO loginVO) throws Exception {
+        return studyLoginDAO.loginAction(loginVO);
+    }
+
+    @Override
+    public LoginVO findIdAction(LoginVO loginVO) throws Exception {
+        return studyLoginDAO.findIdAction(loginVO);
+    }
+
+    @Override
+    public String findPwAction(LoginVO loginVO) throws Exception {
+
+        int findPwAction = studyLoginDAO.findPwAction(loginVO);
+
+        if (findPwAction > 0) {
+            String tempPw = tempPwCreate();
+
+            String enc = EgovFileScrty.encryptPassword(tempPw, loginVO.getUserId());
+
+            loginVO.setUserPw(enc);
+
+            studyLoginDAO.modifyPw(loginVO);
+
+            return tempPw;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void changePw(LoginVO loginVO) throws Exception {
+        studyLoginDAO.modifyPw(loginVO);
+    }
+
+    public static String tempPwCreate() throws Exception {
         // TODO Auto-generated method stub
 
         char[] charList = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -71,5 +80,5 @@ public class StudyLoginServiceImpl extends EgovAbstractServiceImpl implements St
 
         return result.toString();
     }
-	
+
 }

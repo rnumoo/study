@@ -1,6 +1,7 @@
 package study.login.web;
 
 import java.security.PrivateKey;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,7 +103,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login/signupResult.do")
-    public String joinStep3() throws Exception {
+    public String signupResult() throws Exception {
         return "study/login/signupResult";
     }
 
@@ -135,6 +136,8 @@ public class LoginController {
 
         LoginVO result = studyLoginService.loginAction(loginVO);
 
+        LocalDate nowDate = LocalDate.now();
+
         // 로그인 성공
         if (result != null && result.getUserId() != null && result.getUserId() != "") {
             result.setUserPh(aesUtil.decode(result.getUserPh()));
@@ -142,6 +145,13 @@ public class LoginController {
 
             request.getSession().setAttribute("userLoginVO", result);
             session.removeAttribute(RSAManager.RSA_WEB_KEY);
+
+            LocalDate pwExpireChk = result.getPwModdate().plusDays(90);
+            if (pwExpireChk.isBefore(nowDate)) {
+                rtn.put("redirectPage", Boolean.TRUE);
+            } else {
+                rtn.put("redirectPage", Boolean.FALSE);
+            }
 
             rtn.put("success", Boolean.TRUE);
             return new Gson().toJson(rtn).getBytes("UTF-8");
@@ -275,6 +285,52 @@ public class LoginController {
         RSAManager.initRsa(request);
 
         return "study/login/changePw";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/login/changePwAction.do")
+    public byte[] changePwAction(LoginVO loginVO, HttpServletRequest request, HttpSession session) throws Exception {
+
+        Map<String, Object> rtn = new HashMap<String, Object>();
+
+        LoginVO userLoginVO = (LoginVO) RequestContextHolder.getRequestAttributes().getAttribute("userLoginVO",
+                RequestAttributes.SCOPE_SESSION);
+
+        String userPw = request.getParameter("userPw");
+        String userPwNew = request.getParameter("userPwNew");
+
+        PrivateKey privateKey = (PrivateKey) session.getAttribute(RSAManager.RSA_WEB_KEY);
+
+        AESUtil aesUtil = new AESUtil(AES_KEY);
+
+        loginVO.setUserId(userLoginVO.getUserId());
+        loginVO.setUserName(userLoginVO.getUserName());
+        loginVO.setUserMail(aesUtil.encode(userLoginVO.getUserMail()));
+        loginVO.setUserPw(RSAManager.decryptRsa(privateKey, userPw));
+
+        String enc = EgovFileScrty.encryptPassword(loginVO.getUserPw(), loginVO.getUserId());
+        loginVO.setUserPw(enc);
+
+        LoginVO pwConfirm = studyLoginService.loginAction(loginVO);
+
+        if (pwConfirm == null || pwConfirm.getUserId() == null || pwConfirm.getUserId() == "") {
+            rtn.put("success", Boolean.FALSE);
+            rtn.put("changePwFailMsg", "현재 비밀번호가 맞지 않습니다. 다시 확인 후 입력해주세요.");
+
+            return new Gson().toJson(rtn).getBytes("UTF-8");
+        } else {
+            loginVO.setUserPw(RSAManager.decryptRsa(privateKey, userPwNew));
+            String encNew = EgovFileScrty.encryptPassword(loginVO.getUserPw(), loginVO.getUserId());
+            loginVO.setUserPw(encNew);
+
+            studyLoginService.changePw(loginVO);
+
+            session.removeAttribute(RSAManager.RSA_WEB_KEY);
+            rtn.put("success", Boolean.TRUE);
+            rtn.put("changePwSucMsg", "비밀번호 변경 성공");
+
+            return new Gson().toJson(rtn).getBytes("UTF-8");
+        }
     }
 
     private void sendEmail(String email, Map<String, String> param) throws Exception {

@@ -9,7 +9,8 @@
 		userName,
 		userPw,
 		userPh,
-		userMail
+		userMail,
+		pwModdate
 		)
 		
 		VALUES(
@@ -18,6 +19,7 @@
 		,#{userPw}
 		,#{userPh}
 		,#{userMail}
+		,now()
 		)
 	</insert>
 	
@@ -33,7 +35,8 @@
 				userName,
 				userPw,
 				userPh,
-				userMail
+				userMail,
+				pwModdate
                 
         FROM    userInfo
         WHERE 	userId = #{userId}
@@ -60,7 +63,8 @@
 	
 	<update id="studyLoginDAO.modifyPw">
 		UPDATE userInfo
-		SET userPw = #{userPw}
+		SET userPw = #{userPw},
+			pwModdate = now()
 		WHERE userId = #{userId}
 		AND userName = #{userName}
 		AND userMail = #{userMail}
