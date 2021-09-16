@@ -20,4 +20,16 @@ public class StudyLoginDAO extends EgovComAbstractDAO {
 		return selectOne("studyLoginDAO.loginAction", loginVO);
 	}
 	
+	public LoginVO findIdAction(LoginVO loginVO) throws Exception {
+		return selectOne("studyLoginDAO.findIdAction", loginVO);
+	}
+	
+	public int findPwAction(LoginVO loginVO) throws Exception{
+		return selectOne("studyLoginDAO.findPwAction", loginVO);
+	}
+	
+	public void modifyPw(LoginVO loginVO) throws Exception {
+		update("studyLoginDAO.modifyPw", loginVO);
+	}
+	
 }

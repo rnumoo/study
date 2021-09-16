@@ -40,6 +40,7 @@
         <div class="gnb_area">
             <ul class="submenu">
             	<c:if test="${ not empty userLoginVO }">
+            		<li><a href="<c:url value="/login/changePw.do"/>">비밀번호 변경</a></li>
             		<li><a href="<c:url value="/login/logout.do"/>">로그아웃</a></li>
             	</c:if>
             	<c:if test="${ empty userLoginVO }">

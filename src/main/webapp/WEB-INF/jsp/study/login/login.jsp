@@ -43,7 +43,7 @@
             		</tr>
             		<tr>
             			<td>시스템 이용 문의사항 (T)053-000-0000</td>
-            			<td><a href="#LINK"><button type="button" style="background-color:gray;"><p style="color:white;">아이디/비밀번호 찾기</p></button></a></td>
+            			<td><button type="button" onclick="fn_findIdPw();" style="background-color:gray;"><p style="color:white;">아이디/비밀번호 찾기</p></button></td>
             		</tr>
             	</table>
             </div>
@@ -96,6 +96,12 @@ function fn_loginAction() {
 			alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n"+"error: " + error);
 		}
 	});
+}
+
+function fn_findIdPw(){
+var frm = document.loginForm;
+	
+	window.open("findId.do", "findId", "width=500, height=500, left=600, top=200");
 }
 
 </script>

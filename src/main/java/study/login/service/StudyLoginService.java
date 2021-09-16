@@ -9,4 +9,8 @@ public interface StudyLoginService {
 	
 	public LoginVO loginAction(LoginVO loginVO) throws Exception;
 	
+	public LoginVO findIdAction(LoginVO loginVO) throws Exception;
+	
+	public String findPwAction(LoginVO loginVO) throws Exception;
+	
 }

@@ -40,5 +40,30 @@
         AND 	userPw = #{userPw}
         LIMIT 1
     </select>
+    
+    <select id="studyLoginDAO.findIdAction" resultType="LoginVO">
+    	SELECT userId
+    	
+    	FROM userInfo
+    	WHERE userName = #{userName}
+    	AND userMail = #{userMail}
+    	LIMIT 1
+    </select>
+    
+    <select id="studyLoginDAO.findPwAction" resultType="int">
+		SELECT COUNT(*)
+		FROM userInfo
+		WHERE userId = #{userId}
+		AND userName = #{userName}
+		AND userMail = #{userMail}
+	</select>
+	
+	<update id="studyLoginDAO.modifyPw">
+		UPDATE userInfo
+		SET userPw = #{userPw}
+		WHERE userId = #{userId}
+		AND userName = #{userName}
+		AND userMail = #{userMail}
+	</update>
 	
 </mapper>

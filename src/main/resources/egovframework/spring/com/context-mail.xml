@@ -12,11 +12,11 @@
     
     <!-- 메일 연동 인터페이스에서 첨부파일 미사용 -->
     <bean id="EMSMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl" 
-        p:host="STMP서버주소" 
+        p:host="smtp.gmail.com" 
         p:port="465"  
         p:protocol="smtps" 
-        p:username="아이디" 
-        p:password="비밀번호"> 
+        p:username="webmaster@eplatform.co.kr" 
+        p:password="eplat1468!"> 
         <property name="javaMailProperties"> 
             <props> 
                 <prop key="mail.smtps.auth">true</prop> 
