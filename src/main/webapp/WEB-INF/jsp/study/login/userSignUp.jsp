@@ -144,17 +144,16 @@ function fn_idConfirm() {
 		data: {"userId": userId},
 		success: function(data) {
 			if (data.success) {
-				if (data.result) {
-					alert("사용할 수 있는 아이디입니다.");
-					$("#isIdConf").val("Y");
-				} else {
-					alert("이미 존재하는 아이디입니다.");
-					$("#inputId").val("");
-					$("#inputId").focus();
-				}
+				alert("사용할 수 있는 아이디입니다.");
+				$("#isIdConf").val("Y");
 			} else {
-				alert("Error");
+				alert("이미 존재하는 아이디입니다.");
+				$("#inputId").val("");
+				$("#inputId").focus();
 			}
+		},
+		error: function(request, status, error){
+			alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n"+"error: " + error);
 		}
 	});
 }

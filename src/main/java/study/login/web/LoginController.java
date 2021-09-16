@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 
 import egovframework.com.cmm.service.EgovProperties;
 import egovframework.com.utl.sim.service.EgovFileScrty;
-import egovframework.rte.fdl.string.EgovStringUtil;
 import study.common.service.RSAManager;
 import study.login.service.AESUtil;
 import study.login.service.LoginVO;
@@ -52,12 +51,6 @@ public class LoginController {
 
     @RequestMapping(value = "/login/userSignUpAction.do", method = RequestMethod.POST)
     public String userSignUpAction(LoginVO loginVO, HttpSession session) throws Exception {
-
-        String userId = loginVO.getUserId();
-
-        if (EgovStringUtil.isEmpty(userId)) {
-            throw new Exception("아이디가 입력되지 않았습니다.");
-        }
 
         PrivateKey privateKey = (PrivateKey) session.getAttribute(RSAManager.RSA_WEB_KEY);
 
@@ -92,11 +85,9 @@ public class LoginController {
         int confirm = (int) studyLoginService.idConfirm(userId);
 
         if (confirm > 0) {
-            rtn.put("success", Boolean.TRUE);
-            rtn.put("result", Boolean.FALSE);
+            rtn.put("success", Boolean.FALSE);
         } else {
             rtn.put("success", Boolean.TRUE);
-            rtn.put("result", Boolean.TRUE);
         }
 
         return new Gson().toJson(rtn).getBytes("UTF-8");
