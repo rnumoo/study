@@ -60,8 +60,11 @@ function fn_findIdAction() {
 		 return;
 	}
 	
-	$("#userName").val($("#inputName").val());
-	$("#userMail").val($("#inputMail").val());
+	var rsa = new RSAKey();
+	rsa.setPublic($("#RSAModulus").val(), $("#RSAExponent").val());
+	
+	$("#userName").val(rsa.encrypt($("#inputName").val()));
+	$("#userMail").val(rsa.encrypt($("#inputMail").val()));
 	
 	$.ajax({
 		url: "findIdAction.do",

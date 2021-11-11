@@ -25,7 +25,8 @@ public class CommonInterceptor extends HandlerInterceptorAdapter {
         if (request.getSession() == null) {
             isAuthenticated = false;
         } else {
-            if (request.getSession().getAttribute("userLoginVO") == null) {
+            if (request.getSession().getAttribute("userLoginVO") == null
+                    && request.getSession().getAttribute("didLoginVO") == null) {
                 isAuthenticated = false;
             } else {
                 isAuthenticated = true;

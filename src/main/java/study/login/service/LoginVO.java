@@ -2,6 +2,8 @@ package study.login.service;
 
 import java.time.LocalDate;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class LoginVO {
 
     private String userId;
@@ -59,4 +61,15 @@ public class LoginVO {
         this.pwModdate = pwModdate;
     }
 
+    // @Override
+    // public String toString() {
+    // return "LoginVO [userId=" + userId + ", userName=" + userName + ", userPw=" +
+    // userPw + ", userPh=" + userPh
+    // + ", userMail=" + userMail + ", pwModdate=" + pwModdate + "]";
+    // }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

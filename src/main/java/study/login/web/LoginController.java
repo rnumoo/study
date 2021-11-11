@@ -22,11 +22,14 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import com.google.gson.Gson;
+import com.ieetu.did.ClaimInfo;
+import com.ieetu.did.DidLogin;
 
 import egovframework.com.cmm.service.EgovProperties;
 import egovframework.com.utl.sim.service.EgovFileScrty;
 import study.common.service.RSAManager;
 import study.login.service.AESUtil;
+import study.login.service.DidLoginVO;
 import study.login.service.LoginVO;
 import study.login.service.StudyLoginService;
 
@@ -144,6 +147,8 @@ public class LoginController {
                 rtn.put("redirectPage", Boolean.FALSE);
             }
 
+            System.out.println(loginVO.toString());
+
             rtn.put("success", Boolean.TRUE);
             return new Gson().toJson(rtn).getBytes("UTF-8");
 
@@ -157,6 +162,7 @@ public class LoginController {
 
     @RequestMapping(value = "/main.do")
     public String main() throws Exception {
+
         return "study/main/main";
     }
 
@@ -164,12 +170,19 @@ public class LoginController {
     public String logout() throws Exception {
 
         RequestContextHolder.getRequestAttributes().setAttribute("userLoginVO", null, RequestAttributes.SCOPE_SESSION);
+        RequestContextHolder.getRequestAttributes().setAttribute("didLoginVO", null, RequestAttributes.SCOPE_SESSION);
 
         return "redirect:/main.do";
     }
 
     @RequestMapping(value = "/login/findId.do")
     public String findId(HttpServletRequest request) throws Exception {
+
+        String rsamodul = request.getParameter("RSAModulus");
+        String rsaexp = request.getParameter("RSAExponent");
+
+        request.setAttribute("RSAModulus", rsamodul);
+        request.setAttribute("RSAExponent", rsaexp);
 
         return "study/login/findId";
     }
@@ -184,8 +197,10 @@ public class LoginController {
         String userName = request.getParameter("userName");
         String userMail = request.getParameter("userMail");
 
-        loginVO.setUserName(userName);
-        loginVO.setUserMail(userMail);
+        PrivateKey privateKey = (PrivateKey) session.getAttribute(RSAManager.RSA_WEB_KEY);
+
+        loginVO.setUserName(RSAManager.decryptRsa(privateKey, userName));
+        loginVO.setUserMail(RSAManager.decryptRsa(privateKey, userMail));
 
         AESUtil aesUtil = new AESUtil(AES_KEY);
         loginVO.setUserMail(aesUtil.encode(loginVO.getUserMail()));
@@ -333,6 +348,34 @@ public class LoginController {
         messageHelper.setFrom("webmaster@eplatform.co.kr", "fromStudy");
         messageHelper.setTo(new InternetAddress(email, "toStudy", "UTF-8"));
         mailSender.send(message);
+    }
+
+    @RequestMapping(value = "/login/daeguDidQrpage.do")
+    public String daeguDidQrpage() throws Exception {
+
+        return "study/login/daeguDidQrpage";
+    }
+
+    @RequestMapping(value = "/login/loginResult.do")
+    public String loginResult(@ModelAttribute("didLoginVO") DidLoginVO didLoginVO, HttpServletRequest request,
+            String returnData) throws Exception {
+        // String DID = request.getParameter("DID");
+        // String adsf = didLoginVO.getDID();
+
+        String privKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJQ/OsXSsd/2ew4j4ixXFAZjt/j/MwKHpzKFLMcjkyP8TOcYs8635wKqjQTxPq5TWG0J7BfpMoylA1UXb7xnqJ/AzoTxT8jwJQ5j+VASACr2Ejx6882soH++kwBpHgxeYg0A4worqMSsW1MfcNuiNcB4FnauUn/0F7cqVJOTKd3hAgMBAAECgYBCE4jDweyskbU5kT7vWoS/cFUA8+atmv8oInnZ7P5ZjMxOORFz8z5RTul6KXkxxE5mk4SbB8MTMz2wALk59c4PbMvMXlNyJKnW8UW2yCS/WGV66Rr9E5BI2AMSbcFbQSlnoKi62brds6DYvN5iXBHPsj2OL0ApXQoucG68kVtgHQJBAPKMrepOyXobY4y3TsGE8ANZDG24vL4jTJq6NwQOVxzvgXFEmC3hus+iBJGkCs22NPNGw7uV98BbiPVKQsLHfPMCQQCcd8wfw2kQbh8pfeWIyMbsMiSuDDjPl+rGSPWyiRHA1SPXMt1qChqxc7pIAz7vS+bfVuLRYNkrVaX6GiAoDJ7bAkEAmWDyvZ+S8t+NBTgJ2oBZUpSmMmBHIqmp0JJ/JdZ3qfmezmTFIwaCnrhi0UJ9/nYBZ/HQ5rfAEukPY6XRL+D8lwJAcFSpHRyjLwKAKL+TrFHITgXpw3JOzuqXyGbUzaoOLsxWAMcpollCtKcK02xRIGbzht/P0tWe07eXgyiCcX4uBQJBANnox/vourI0HFQcSMbnFBwHltaZdENc9ctTH16H2YsC2eUOw6gz6w0ErqnGFwihIvrAEQbbh9Jf15z910+BOag=";
+        ClaimInfo claimInfo = DidLogin.decryptData(returnData, privKey);
+
+        didLoginVO.setDID(claimInfo.getDid());
+        didLoginVO.setBirthDate(claimInfo.getBirthdate());
+        didLoginVO.setPhoneNumber(claimInfo.getPhoneNumber());
+        didLoginVO.setGender(claimInfo.getGender());
+        didLoginVO.setCI(claimInfo.getCi());
+        didLoginVO.setName(claimInfo.getName());
+        didLoginVO.setIsForeigner(claimInfo.getIsForeigner());
+
+        request.getSession().setAttribute("didLoginVO", didLoginVO);
+
+        return "study/login/loginResult";
     }
 
 }
